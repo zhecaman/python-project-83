@@ -21,8 +21,9 @@
         <tr>
           <td>{{url["id"]}}</td>
           <td>{{url["name"]}}</td>
-          <td>{{url["created_at"] | default:""}}</td>
+          <td>{{url["created_at"] | default('')}}</td>
         </tr>
+        {%endfor%}
       </tbody>
     </table>
   </div>

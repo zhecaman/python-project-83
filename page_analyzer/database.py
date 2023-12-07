@@ -19,18 +19,14 @@ class DataBase:
     
     
     def get_id_if_exist(self, url):
-        """
-        Args:
-            url (str): _description_
-
-        Returns:
-            bool: _description_
-        """
         with self.connection.cursor() as cursor:
             cursor.execute(
                 "SELECT id FROM urls WHERE name = %s;", (url,)
             )
-            return cursor.fetchone()
+            res = cursor.fetchone()
+        if res:
+            return res[0]
+        return
         
         
     def add_url(self, url):
@@ -49,16 +45,16 @@ class DataBase:
         with self.connection.cursor() as cursor:
             cursor.execute(
                 "SELECT * FROM urls")
-        res = cursor.fetchall()
-        urls = []
-        for row in res:
-            url = {
-                'id' : row[0],
-                'name' : row[1],
-                'created_at' : row[2]
-            }
-            urls.append(url)
-        return urls
+            res = cursor.fetchall()
+            urls = []
+            for row in res:
+                url = {
+                    'id' : row[0],
+                    'name' : row[1],
+                    'created_at' : row[2]
+                }
+                urls.append(url)
+        return urls[::-1]
     
     
     def get_url(self, id):
@@ -66,13 +62,14 @@ class DataBase:
             cursor.execute(
                 "SELECT * FROM urls WHERE id = %s;", (id,)
             )
-            _id, name, created_at = cursor.fetchone()
-            url = {
-                'id': _id,
-                'name': name, 
-                'created_at': created_at
-            }
-            return url
+            res = cursor.fetchone()
+        id, name, created_at = res
+        url = {
+            'id': id,
+            'name': name, 
+            'created_at' : created_at
+        }
+        return url
 
     def __create_table(self, sql_file='database.sql'):
         with open(sql_file, 'r') as file:

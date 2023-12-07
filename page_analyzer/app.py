@@ -14,12 +14,12 @@ app.config['SECRET_KEY'] = get_from_env('SECRET_KEY')
 
 #db = DataBase(get_from_env('DATABASE_URL')) or
 db_url = get_from_env("DATABASE_URL")
-db = DataBase(db_url=db_url) if db_url else DataBase(host='localhost', port='5432',dbname='page-analyzer', user='zcmn', password='123009')
+db = DataBase(db_url) if db_url else DataBase(host='localhost', port='5432',dbname='page-analyzer', user='zcmn', password='123009')
 
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    return render_template('index.html', messages=get_flashed_messages(with_categories=True))
 
 
 @app.route('/urls')
@@ -42,13 +42,15 @@ def analize_url():
     flash("Запись успешно добавлена", 'success')
     return redirect(url_for('show_url', id=_id))
 
-@app.route('/urls/<id>')
+@app.route('/urls/<int:id>')
 def show_url(id):
     url = db.get_url(id)
-    return render_template('show_url.html', url=url)
+    return render_template('show_url.html', url=url, messages=get_flashed_messages(with_categories=True))
     
     
     
 if __name__ == '__main__':
-    app.run()
-    
+    try:
+        app.run()
+    finally:
+        db.close()
