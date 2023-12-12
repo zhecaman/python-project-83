@@ -20,8 +20,9 @@
         {%for url in urls%}
         <tr>
           <td>{{url["id"]}}</td>
-          <td><a href="{{url_for("show_url", id=url["id"])}}">{{url["name"]}}</a></td>
-          <td>{{url["created_at"] | default('')}}</td>
+          <td><a href="{{url_for('show_url', id=url['id'])}}">{{url["name"]}}</a></td>
+          <td>{{url["created_at"] or ''}}</td>
+          <td>{{url["status_code"] or ''}}</td>
         </tr>
         {%endfor%}
       </tbody>

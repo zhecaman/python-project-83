@@ -34,17 +34,20 @@ class DataBase:
             )
             id = cursor.fetchone()[0]
             self.connection.commit()
-            return id
+        return id
 
     def get_all_urls(self):
         with self.connection.cursor() as cursor:
-            cursor.execute("SELECT * FROM urls")
+            cursor.execute(
+                """SELECT urls.id, urls.name, url_checks.created_at, url_checks.status_code FROM urls
+                LEFT JOIN url_checks ON urls.id = url_checks.url_id ORDER BY urls.id DESC;"""
+            )
             res = cursor.fetchall()
-            urls = []
-            for row in res:
-                url = {"id": row[0], "name": row[1], "created_at": row[2]}
-                urls.append(url)
-        return urls[::-1]
+        urls = []
+        for row in res:
+            url = {"id": row[0], "name": row[1], "created_at": row[2], "status_code": row[3]}
+            urls.append(url)
+        return urls
 
     def get_url(self, id):
         with self.connection.cursor() as cursor:
@@ -54,33 +57,34 @@ class DataBase:
         url = {"id": id, "name": name, "created_at": created_at}
         return url
 
-    def add_to_checks(self, id):
+    def add_to_checks(self, id, code):
         created_at = date.today()
         with self.connection.cursor() as cursor:
             cursor.execute(
                 """
-                INSERT INTO url_checks (url_id, created_at) VALUES (%s,%s) RETURNING *;
+                INSERT INTO url_checks (url_id, created_at, status_code) VALUES (%s,%s,%s);
                 """,
-                (id, created_at),
+                (id, created_at, code),
             )
             self.connection.commit()
-            
 
     def get_all_checks_by_id(self, id):
         checks = []
         with self.connection.cursor() as cursor:
             cursor.execute(
-                """SELECT * FROM url_checks WHERE (url_id) = %s;""", (id,))
-            
-            for row in  cursor.fetchall():
+                """SELECT * FROM url_checks WHERE (url_id) = %s ORDER BY id DESC;""",
+                (id,),
+            )
+
+            for row in cursor.fetchall():
                 check = {
-                    'id': row[0],
-                    'url_id': row[1],
-                    'status_code': row[2],
-                    'h1': row[3],
-                    'title': row[4],
-                    'description': row[5],
-                    'created_at': row[6],
+                    "id": row[0],
+                    "url_id": row[1],
+                    "status_code": row[2],
+                    "h1": row[3],
+                    "title": row[4],
+                    "description": row[5],
+                    "created_at": row[6],
                 }
                 checks.append(check)
         return checks
@@ -91,4 +95,3 @@ class DataBase:
 
     def close(self):
         self.connection.close()
- 

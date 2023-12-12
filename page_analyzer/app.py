@@ -7,9 +7,8 @@ from flask import (
     url_for,
     get_flashed_messages,
 )
-from validators import ValidationError
 import logging
-
+import requests
 from .database import DataBase
 from .utils import get_from_env, is_valid_url, to_normal
 
@@ -52,9 +51,8 @@ def analize_url():
     url = to_normal(request.form.get("url"))
     if not is_valid_url(url):
         flash("Некорректный URL", "danger")
-        return render_template(
-            "index.html", messages=get_flashed_messages(with_categories=True)
-        )
+        return redirect(url_for('index'))
+    
     id = db.get_url_id_if_exist(url)
     if id is not None:
         flash("Страница уже добавлена", "info")
@@ -70,19 +68,31 @@ def show_url(id):
     checks = db.get_all_checks_by_id(id)
     print(checks)
     return render_template(
-        "show_url.html", url=url, checks=checks, messages=get_flashed_messages(with_categories=True)
+        "show_url.html",
+        url=url,
+        checks=checks,
+        messages=get_flashed_messages(with_categories=True),
     )
 
 
 @app.post("/urls/<int:id>/checks")
 def check_url(id):
-    db.add_to_checks(id)
-    flash("Запись успешно добавлена", "success")
-    return redirect(url_for("show_url", id=id))
+    try:
+        url = db.get_url(id).get("name")
+        response = requests.get(url)
+        code = response.status_code
+        if code != 200:
+            raise
+        db.add_to_checks(id, code)
+        flash("Страница успешно проверена", "success")
+        return redirect(url_for("show_url", id=id))
+    except Exception:
+        flash(f"Произошла ошибка при проверке", "danger")
+        return redirect(url_for("show_url", id=id))
 
 
 if __name__ == "__main__":
     try:
-        app.run()
+        app.run(debug=True)
     finally:
         db.close()
