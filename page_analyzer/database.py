@@ -62,6 +62,7 @@ class DataBase:
         with self.connection.cursor() as cursor:
             cursor.execute("SELECT * FROM urls WHERE id = %s;", (id,))
             res = cursor.fetchone()
+            print(res)
             if res:
                 id, name, created_at = res
                 url = {"id": id, "name": name, "created_at": created_at}

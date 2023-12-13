@@ -16,5 +16,5 @@ CREATE TABLE url_checks (
     h1 text,
     title text,
     description text,
-    created_at timestamp NOT NULL
+    created_at DATE NOT NULL
   );

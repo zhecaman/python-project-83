@@ -45,17 +45,6 @@ optional = false
 python-versions = ">=3.8"
 
 [[package]]
-name = "bs4"
-version = "0.0.1"
-description = "Dummy package for Beautiful Soup"
-category = "main"
-optional = false
-python-versions = "*"
-
-[package.dependencies]
-beautifulsoup4 = "*"
-
-[[package]]
 name = "certifi"
 version = "2023.11.17"
 description = "Python package for providing Mozilla's CA Bundle."
@@ -89,6 +78,19 @@ description = "Cross-platform colored terminal text."
 category = "main"
 optional = false
 python-versions = "!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*,!=3.4.*,!=3.5.*,!=3.6.*,>=2.7"
+
+[[package]]
+name = "flake8"
+version = "6.1.0"
+description = "the modular source code checker: pep8 pyflakes and co"
+category = "dev"
+optional = false
+python-versions = ">=3.8.1"
+
+[package.dependencies]
+mccabe = ">=0.7.0,<0.8.0"
+pycodestyle = ">=2.11.0,<2.12.0"
+pyflakes = ">=3.1.0,<3.2.0"
 
 [[package]]
 name = "flask"
@@ -179,6 +181,14 @@ optional = false
 python-versions = ">=3.7"
 
 [[package]]
+name = "mccabe"
+version = "0.7.0"
+description = "McCabe checker, plugin for flake8"
+category = "dev"
+optional = false
+python-versions = ">=3.6"
+
+[[package]]
 name = "mypy-extensions"
 version = "1.0.0"
 description = "Type system extensions for programs checked with the mypy type checker."
@@ -221,6 +231,22 @@ description = "psycopg2 - Python-PostgreSQL Database Adapter"
 category = "main"
 optional = false
 python-versions = ">=3.7"
+
+[[package]]
+name = "pycodestyle"
+version = "2.11.1"
+description = "Python style guide checker"
+category = "dev"
+optional = false
+python-versions = ">=3.8"
+
+[[package]]
+name = "pyflakes"
+version = "3.1.0"
+description = "passive checker of Python programs"
+category = "dev"
+optional = false
+python-versions = ">=3.8"
 
 [[package]]
 name = "python-dotenv"
@@ -324,17 +350,17 @@ watchdog = ["watchdog (>=2.3)"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.10"
-content-hash = "deb1cf399d6f6fdc1b5dc173631a30d4c1ed76b802776b098463bac2980d2b24"
+content-hash = "b6c99e4527d3f58165cb6aff1b58942830ddde1ce05d781ebfcddafb67a027b5"
 
 [metadata.files]
 beautifulsoup4 = []
 black = []
 blinker = []
-bs4 = []
 certifi = []
 charset-normalizer = []
 click = []
 colorama = []
+flake8 = []
 flask = []
 gunicorn = []
 idna = []
@@ -342,11 +368,14 @@ itsdangerous = []
 jinja2 = []
 lxml = []
 markupsafe = []
+mccabe = []
 mypy-extensions = []
 packaging = []
 pathspec = []
 platformdirs = []
 psycopg2-binary = []
+pycodestyle = []
+pyflakes = []
 python-dotenv = []
 requests = []
 soupsieve = []
