@@ -39,9 +39,13 @@ class DataBase:
     def get_all_urls(self):
         with self.connection.cursor() as cursor:
             cursor.execute(
-                """SELECT urls.id, urls.name, url_checks.created_at, url_checks.status_code FROM urls
-                LEFT JOIN url_checks ON urls.id = url_checks.url_id ORDER BY urls.id DESC;"""
-            )
+                """
+                SELECT DISTINCT urls.id, urls.name, url_checks.created_at, url_checks.status_code
+                FROM urls
+                LEFT JOIN url_checks ON urls.id = url_checks.url_id
+                ORDER BY urls.id DESC;
+                """
+                )
             res = cursor.fetchall()
         urls = []
         for row in res:
@@ -58,29 +62,23 @@ class DataBase:
         with self.connection.cursor() as cursor:
             cursor.execute("SELECT * FROM urls WHERE id = %s;", (id,))
             res = cursor.fetchone()
-        id, name, created_at = res
-        url = {"id": id, "name": name, "created_at": created_at}
-        return url
+            if res:
+                id, name, created_at = res
+                url = {"id": id, "name": name, "created_at": created_at}
+                return url
+            return 
 
-    def add_to_checks(self, id, code):
+    def add_to_checks(self, url_id, code, seo_data):
         created_at = date.today()
         with self.connection.cursor() as cursor:
             cursor.execute(
                 """
-                INSERT INTO url_checks (url_id, created_at, status_code) VALUES (%s,%s, %s);
+                INSERT INTO url_checks (url_id, status_code, h1, title, description, created_at) VALUES (%s,%s,%s,%s,%s,%s);
                 """,
-                (id, created_at, code),
+                (url_id, code, *seo_data, created_at),
             )
             self.connection.commit()
-
-    def update_check(self, id, query):
-        updated_at = date.today()
-        with self.connection.cursor() as cursor:
-            cursor.execute(
-                """UPDATE url_checks SET (status_code, h1, title, description, created_at) = (%s,%s, %s, %s, %s) WHERE url_id = %s;
-        """,
-                (*query, updated_at, id),
-            )
+        print(f"added row: {(url_id, code, *seo_data, created_at)}")
 
     def get_all_checks_by_id(self, id):
         checks = []

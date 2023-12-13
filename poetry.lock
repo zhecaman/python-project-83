@@ -1,4 +1,19 @@
 [[package]]
+name = "beautifulsoup4"
+version = "4.12.2"
+description = "Screen-scraping library"
+category = "main"
+optional = false
+python-versions = ">=3.6.0"
+
+[package.dependencies]
+soupsieve = ">1.2"
+
+[package.extras]
+html5lib = ["html5lib"]
+lxml = ["lxml"]
+
+[[package]]
 name = "black"
 version = "23.12.0"
 description = "The uncompromising code formatter."
@@ -28,6 +43,17 @@ description = "Fast, simple object-to-object and broadcast signaling"
 category = "main"
 optional = false
 python-versions = ">=3.8"
+
+[[package]]
+name = "bs4"
+version = "0.0.1"
+description = "Dummy package for Beautiful Soup"
+category = "main"
+optional = false
+python-versions = "*"
+
+[package.dependencies]
+beautifulsoup4 = "*"
 
 [[package]]
 name = "certifi"
@@ -131,6 +157,20 @@ MarkupSafe = ">=2.0"
 i18n = ["Babel (>=2.7)"]
 
 [[package]]
+name = "lxml"
+version = "4.9.3"
+description = "Powerful and Pythonic XML processing library combining libxml2/libxslt with the ElementTree API."
+category = "main"
+optional = false
+python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, != 3.4.*"
+
+[package.extras]
+cssselect = ["cssselect (>=0.7)"]
+html5 = ["html5lib"]
+htmlsoup = ["beautifulsoup4"]
+source = ["Cython (>=0.29.35)"]
+
+[[package]]
 name = "markupsafe"
 version = "2.1.3"
 description = "Safely add untrusted strings to HTML/XML markup."
@@ -212,6 +252,14 @@ socks = ["PySocks (>=1.5.6,!=1.5.7)"]
 use_chardet_on_py3 = ["chardet (>=3.0.2,<6)"]
 
 [[package]]
+name = "soupsieve"
+version = "2.5"
+description = "A modern CSS selector implementation for Beautiful Soup."
+category = "main"
+optional = false
+python-versions = ">=3.8"
+
+[[package]]
 name = "tomli"
 version = "2.0.1"
 description = "A lil' TOML parser"
@@ -276,11 +324,13 @@ watchdog = ["watchdog (>=2.3)"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.10"
-content-hash = "9bb73bb397775afbdc40f22a777db6ea00cc13af0b37debb36d5e293ebb5114d"
+content-hash = "deb1cf399d6f6fdc1b5dc173631a30d4c1ed76b802776b098463bac2980d2b24"
 
 [metadata.files]
+beautifulsoup4 = []
 black = []
 blinker = []
+bs4 = []
 certifi = []
 charset-normalizer = []
 click = []
@@ -290,6 +340,7 @@ gunicorn = []
 idna = []
 itsdangerous = []
 jinja2 = []
+lxml = []
 markupsafe = []
 mypy-extensions = []
 packaging = []
@@ -298,6 +349,7 @@ platformdirs = []
 psycopg2-binary = []
 python-dotenv = []
 requests = []
+soupsieve = []
 tomli = []
 typing-extensions = []
 urllib3 = []

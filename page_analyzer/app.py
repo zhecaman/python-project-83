@@ -10,7 +10,7 @@ from flask import (
 import logging
 import requests
 from .database import DataBase
-from .utils import get_from_env, is_valid_url, to_normal
+from .utils import get_from_env, is_valid_url, to_normal, get_seo_data
 
 logging.basicConfig(level=logging.INFO)
 
@@ -18,7 +18,6 @@ app = Flask(__name__)
 app.config["SECRET_KEY"] = get_from_env("SECRET_KEY")
 
 
-# db = DataBase(get_from_env('DATABASE_URL')) or
 db_url = get_from_env("DATABASE_URL")
 db = (
     DataBase(db_url)
@@ -47,12 +46,12 @@ def show_urls():
 
 
 @app.post("/urls")
-def analize_url():
+def process_url():
     url = to_normal(request.form.get("url"))
     if not is_valid_url(url):
         flash("Некорректный URL", "danger")
-        return redirect(url_for('index'))
-    
+        return redirect(url_for("index"))
+
     id = db.get_url_id_if_exist(url)
     if id is not None:
         flash("Страница уже добавлена", "info")
@@ -65,6 +64,8 @@ def analize_url():
 @app.route("/urls/<int:id>")
 def show_url(id):
     url = db.get_url(id)
+    if not url:
+        return render_template('404.html')
     checks = db.get_all_checks_by_id(id)
     print(checks)
     return render_template(
@@ -83,14 +84,18 @@ def check_url(id):
         code = response.status_code
         if code != 200:
             raise
-        if not db.is_checked(id)
-        db.add_to_checks(id, code)
+        seo_data = get_seo_data(response.text)
+        db.add_to_checks(url_id=id, code=code, seo_data=seo_data)
         flash("Страница успешно проверена", "success")
         return redirect(url_for("show_url", id=id))
     except Exception:
-        flash(f"Произошла ошибка при проверке", "danger")
+        flash("Произошла ошибка при проверке", "danger")
         return redirect(url_for("show_url", id=id))
 
+
+@app.errorhandler(404)
+def error_404():
+    return render_template('404.html')
 
 if __name__ == "__main__":
     try:
