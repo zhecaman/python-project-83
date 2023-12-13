@@ -45,7 +45,12 @@ class DataBase:
             res = cursor.fetchall()
         urls = []
         for row in res:
-            url = {"id": row[0], "name": row[1], "created_at": row[2], "status_code": row[3]}
+            url = {
+                "id": row[0],
+                "name": row[1],
+                "created_at": row[2],
+                "status_code": row[3],
+            }
             urls.append(url)
         return urls
 
@@ -62,11 +67,20 @@ class DataBase:
         with self.connection.cursor() as cursor:
             cursor.execute(
                 """
-                INSERT INTO url_checks (url_id, created_at, status_code) VALUES (%s,%s,%s);
+                INSERT INTO url_checks (url_id, created_at, status_code) VALUES (%s,%s, %s);
                 """,
                 (id, created_at, code),
             )
             self.connection.commit()
+
+    def update_check(self, id, query):
+        updated_at = date.today()
+        with self.connection.cursor() as cursor:
+            cursor.execute(
+                """UPDATE url_checks SET (status_code, h1, title, description, created_at) = (%s,%s, %s, %s, %s) WHERE url_id = %s;
+        """,
+                (*query, updated_at, id),
+            )
 
     def get_all_checks_by_id(self, id):
         checks = []

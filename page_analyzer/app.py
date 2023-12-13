@@ -83,6 +83,7 @@ def check_url(id):
         code = response.status_code
         if code != 200:
             raise
+        if not db.is_checked(id)
         db.add_to_checks(id, code)
         flash("Страница успешно проверена", "success")
         return redirect(url_for("show_url", id=id))

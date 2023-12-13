@@ -3,8 +3,8 @@ import validators.url
 from dotenv import load_dotenv
 from pathlib import Path
 from urllib.parse import urlparse
-
-
+from bs4 import BeautifulSoup
+import requests
 
 def get_from_env(key):
     dotenv = Path(__file__).parent.absolute() / '.env'
@@ -18,4 +18,7 @@ def is_valid_url(str_url):
 def to_normal(str_url):
     url = urlparse(str_url)
     return f'{url.scheme}://{url.netloc}'
+
+
+def get_seo_data(soup):
     
