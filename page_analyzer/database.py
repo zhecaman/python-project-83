@@ -29,7 +29,8 @@ class DataBase:
         created_at = date.today()
         with self.connection.cursor() as cursor:
             cursor.execute(
-                "INSERT INTO urls (name, created_at) VALUES (%s, %s) RETURNING (id);",
+                """INSERT INTO urls (name, created_at)
+                VALUES (%s, %s) RETURNING (id);""",
                 (url, created_at),
             )
             id = cursor.fetchone()[0]
@@ -40,12 +41,13 @@ class DataBase:
         with self.connection.cursor() as cursor:
             cursor.execute(
                 """
-                SELECT DISTINCT urls.id, urls.name, url_checks.created_at, url_checks.status_code
+                SELECT DISTINCT urls.id, urls.name,
+                url_checks.created_at, url_checks.status_code
                 FROM urls
                 LEFT JOIN url_checks ON urls.id = url_checks.url_id
                 ORDER BY urls.id DESC;
                 """
-                )
+            )
             res = cursor.fetchall()
         urls = []
         for row in res:
@@ -67,14 +69,16 @@ class DataBase:
                 id, name, created_at = res
                 url = {"id": id, "name": name, "created_at": created_at}
                 return url
-            return 
+            return
 
     def add_to_checks(self, url_id, code, seo_data):
         created_at = date.today()
         with self.connection.cursor() as cursor:
             cursor.execute(
                 """
-                INSERT INTO url_checks (url_id, status_code, h1, title, description, created_at) VALUES (%s,%s,%s,%s,%s,%s);
+                INSERT INTO url_checks
+                (url_id, status_code, h1, title, description, created_at)
+                VALUES (%s,%s,%s,%s,%s,%s);
                 """,
                 (url_id, code, *seo_data, created_at),
             )
@@ -85,7 +89,8 @@ class DataBase:
         checks = []
         with self.connection.cursor() as cursor:
             cursor.execute(
-                """SELECT * FROM url_checks WHERE (url_id) = %s ORDER BY id DESC;""",
+                """SELECT * FROM url_checks
+                WHERE (url_id) = %s ORDER BY id DESC;""",
                 (id,),
             )
 

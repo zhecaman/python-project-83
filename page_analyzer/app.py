@@ -97,8 +97,9 @@ def check_url(id):
 def error_404():
     return render_template('404.html')
 
+
 if __name__ == "__main__":
     try:
-        app.run(debug=True)
+        app.run()
     finally:
         db.close()

@@ -4,11 +4,10 @@ from dotenv import load_dotenv
 from pathlib import Path
 from urllib.parse import urlparse
 from bs4 import BeautifulSoup
-import requests
-
+import secrets
 
 def get_from_env(key):
-    dotenv = Path(__file__).parent.absolute() / '.env'
+    dotenv = Path(__file__).parent.absolute() / ".env"
     load_dotenv(dotenv)
     return os.environ.get(key)
 
@@ -16,18 +15,21 @@ def get_from_env(key):
 def is_valid_url(str_url):
     return validators.url(str_url) and len(str_url) <= 255
 
+
 def to_normal(str_url):
     url = urlparse(str_url)
-    return f'{url.scheme}://{url.netloc}'
+    return f"{url.scheme}://{url.netloc}"
 
 
 def get_seo_data(response):
-    soup = BeautifulSoup(response, 'lxml')
-    t = soup.find('title')
+    soup = BeautifulSoup(response, "lxml")
+    t = soup.find("title")
     title = t.text.strip() if t else None
-    h = soup.find('h1')
+    h = soup.find("h1")
     h1 = h.text.strip() if h else None
-    desc = soup.find('meta', {'name':'description'})
-    description = desc.get('content') if desc else None
+    desc = soup.find("meta", {"name": "description"})
+    description = desc.get("content") if desc else None
 
     return h1, title, description
+
+secrets.token_hex
