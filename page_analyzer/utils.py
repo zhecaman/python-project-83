@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 from pathlib import Path
 from urllib.parse import urlparse
 from bs4 import BeautifulSoup
-import secrets
+
 
 def get_from_env(key):
     dotenv = Path(__file__).parent.absolute() / ".env"
@@ -31,5 +31,3 @@ def get_seo_data(response):
     description = desc.get("content") if desc else None
 
     return h1, title, description
-
-secrets.token_hex

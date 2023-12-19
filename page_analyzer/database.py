@@ -64,7 +64,6 @@ class DataBase:
         with self.connection.cursor() as cursor:
             cursor.execute("SELECT * FROM urls WHERE id = %s;", (id,))
             res = cursor.fetchone()
-            print(res)
             if res:
                 id, name, created_at = res
                 url = {"id": id, "name": name, "created_at": created_at}
@@ -83,7 +82,6 @@ class DataBase:
                 (url_id, code, *seo_data, created_at),
             )
             self.connection.commit()
-        print(f"added row: {(url_id, code, *seo_data, created_at)}")
 
     def get_all_checks_by_id(self, id):
         checks = []

@@ -9,14 +9,16 @@ from flask import (
 )
 import logging
 import requests
-from .database import DataBase
-from .utils import get_from_env, is_valid_url, to_normal, get_seo_data
+from page_analyzer.database import DataBase
+from page_analyzer.utils import get_from_env, is_valid_url, to_normal, get_seo_data
 
-logging.basicConfig(level=logging.INFO)
+#logging.basicConfig(format="%(asctime)s - %(levelname)s - %(message)s", level=logging.INFO)
 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = get_from_env("SECRET_KEY")
-
+app.logger.setLevel(logging.DEBUG)
+gunicorn_logger = logging.getLogger('gunicorn.error')
+app.logger.handlers = gunicorn_logger.handlers
 
 db_url = get_from_env("DATABASE_URL")
 db = (
@@ -50,7 +52,7 @@ def process_url():
     url = to_normal(request.form.get("url"))
     if not is_valid_url(url):
         flash("Некорректный URL", "danger")
-        return redirect(url_for("index"))
+        return redirect(url_for("index")), 302
 
     id = db.get_url_id_if_exist(url)
     if id is not None:
@@ -58,7 +60,7 @@ def process_url():
         return redirect(url_for("show_url", id=id))
     _id = db.add_to_urls(url)
     flash("Запись успешно добавлена", "success")
-    return redirect(url_for("show_url", id=_id))
+    return redirect(url_for("show_url", id=_id)), 301
 
 
 @app.route("/urls/<int:id>")
@@ -67,7 +69,6 @@ def show_url(id):
     if not url:
         return render_template('404.html')
     checks = db.get_all_checks_by_id(id)
-    print(checks)
     return render_template(
         "show_url.html",
         url=url,
@@ -90,12 +91,17 @@ def check_url(id):
         return redirect(url_for("show_url", id=id))
     except Exception:
         flash("Произошла ошибка при проверке", "danger")
-        return redirect(url_for("show_url", id=id))
+        return redirect(url_for("show_url", id=id)), 301
 
 
 @app.errorhandler(404)
-def error_404():
-    return render_template('404.html')
+def error_404(err):
+    return render_template('404.html'), 404
+
+
+@app.errorhandler(500)
+def error_500(err):
+    return render_template('500.html'), 500
 
 
 if __name__ == "__main__":
