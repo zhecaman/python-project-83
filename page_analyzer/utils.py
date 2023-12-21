@@ -7,9 +7,8 @@ from bs4 import BeautifulSoup
 
 
 def get_from_env(key):
-    dotenv = Path(__file__).parent.absolute() / ".env"
-    load_dotenv(dotenv)
-    return os.environ.get(key)
+    load_dotenv()
+    return os.getenv(key)
 
 
 def is_valid_url(str_url):
